@@ -66,4 +66,6 @@ RUN rm -rf ./*
 COPY --from=ui-builder /conductor/ui/build .
 COPY --from=ui-builder /conductor/docker/server/nginx/default.conf.template /etc/nginx/templates/default.conf.template
 
+ENV NGINX_ENVSUBST_FILTER="CONDUCTOR_SERVER_URL"
+
 CMD [ "nginx", "-g", "daemon off;" ]
