@@ -17,7 +17,6 @@ services:
       - internal
     ports:
       - 8000:8080
-      - 8127:5000
     healthcheck:
       test: ["CMD", "curl","-I" ,"-XGET", "http://localhost:8080/health"]
       interval: 60s
@@ -66,7 +65,20 @@ services:
       options:
         max-size: "1k"
         max-file: "3"
-
+ conductor-ui:
+    image: conductor-ui
+    build:
+      context: ../
+      dockerfile: docker/ui/Dockerfile
+    networks:
+      - internal
+    ports:
+      - 8127:5000
+    environment:
+      CONDUCTOR_SERVER_URL: http://conductor-server:8080
+    depends_on:
+      conductor-server:
+        condition: service_healthy
 volumes:
   esdata-conductor:
     driver: local

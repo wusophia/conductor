@@ -18,13 +18,13 @@ LABEL maintainer="Orkes OSS <oss@orkes.io>"
 
 COPY . /conductor
 WORKDIR /conductor
-
+RUN chmod +x gradlew
 RUN if [ "$PREBUILT" = "true" ]; then \
       rm -rf server/build/libs && mkdir -p server/build/libs && \
       cp docker/server/libs/conductor-server.jar server/build/libs/conductor-server-boot.jar && \
       echo "Using pre-built server JAR"; \
     else \
-      ./gradlew build -x test -x spotlessCheck -x shadowJar \
+       ./gradlew build -x test -x spotlessCheck -x shadowJar \
         -PindexingBackend=${INDEXING_BACKEND} \
         -Dorg.gradle.jvmargs=-Xmx2g \
         --no-daemon --no-parallel; \
@@ -34,25 +34,25 @@ RUN if [ "$PREBUILT" = "true" ]; then \
 # ===========================================================================================================
 # 1. UI builder stage
 # ===========================================================================================================
-FROM node:lts AS ui-builder
+#FROM node:lts AS ui-builder
 
-ARG PREBUILT=false
-ARG YARN_OPTS
+#ARG PREBUILT=false
+#ARG YARN_OPTS
 
-LABEL maintainer="Orkes OSS <oss@orkes.io>"
+#LABEL maintainer="Orkes OSS <oss@orkes.io>"
 
-COPY ui /conductor/ui
-WORKDIR /conductor/ui
+#COPY ui /conductor/ui
+#WORKDIR /conductor/ui
 
-RUN if [ "$PREBUILT" = "false" ]; then \
-      corepack enable && corepack prepare yarn@stable --activate && \
-      export REACT_APP_MONACO_EDITOR_USING_CDN=false && \
-      export REACT_APP_ENABLE_ERRORS_INSPECTOR=true && \
-      yarn config set network-timeout 600000 -g && \
-      yarn ${YARN_OPTS} install && cp -r node_modules/monaco-editor public/ && yarn ${YARN_OPTS} build; \
-    else \
-      echo "Using pre-built UI assets"; \
-    fi
+#RUN if [ "$PREBUILT" = "false" ]; then \
+#      corepack enable && corepack prepare yarn@stable --activate && \
+#      export REACT_APP_MONACO_EDITOR_USING_CDN=false && \
+#      export REACT_APP_ENABLE_ERRORS_INSPECTOR=true && \
+#      yarn config set network-timeout 600000 -g && \
+#      yarn ${YARN_OPTS} install && cp -r node_modules/monaco-editor public/ && yarn ${YARN_OPTS} build; \
+#    else \
+#      echo "Using pre-built UI assets"; \
+#    fi
 
 # ===========================================================================================================
 # 2. Final stage
@@ -75,10 +75,10 @@ COPY docker/server/config /app/config
 COPY --from=builder /conductor/server/build/libs/*boot*.jar /app/libs/conductor-server.jar
 
 # Copy compiled UI assets to nginx www directory
-WORKDIR /usr/share/nginx/html
-RUN rm -rf ./*
-COPY --from=ui-builder /conductor/ui/build .
-COPY docker/server/nginx/nginx.conf  /etc/nginx/conf.d/default.conf
+#WORKDIR /usr/share/nginx/html
+#RUN rm -rf ./*
+#COPY --from=ui-builder /conductor/ui/build .
+#COPY docker/server/nginx/nginx.conf  /etc/nginx/conf.d/default.conf
 
 # Copy the files for the server into the app folders
 RUN chmod +x /app/startup.sh
