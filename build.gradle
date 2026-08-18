@@ -8,7 +8,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'org.springframework.boot:spring-boot-gradle-plugin:3.3.11'
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:3.4.13'
         classpath 'com.diffplug.spotless:spotless-plugin-gradle:6.+'
     }
 }
@@ -21,13 +21,14 @@ plugins {
     id 'signing'
     id 'java-library'
     id "com.diffplug.spotless" version "6.25.0"
-    id 'org.springframework.boot' version '3.3.5'
+    id 'org.springframework.boot' version '3.4.13'
 }
 
 // Establish version and status
 ext.githubProjectName = rootProject.name // Change if github project name is not the same as the root project's name
 
-ext["tomcat.version"] = "10.1.54"
+ext["tomcat.version"] = "10.1.57"
+ext["spring-framework.version"] = "6.2.19"
 
 subprojects {
     tasks.withType(Javadoc).all { enabled = false }
