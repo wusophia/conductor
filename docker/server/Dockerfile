@@ -18,7 +18,7 @@ LABEL maintainer="Orkes OSS <oss@orkes.io>"
 
 COPY . /conductor
 WORKDIR /conductor
-RUN chmod +x gradlew
+#RUN chmod +x gradlew
 RUN if [ "$PREBUILT" = "true" ]; then \
       rm -rf server/build/libs && mkdir -p server/build/libs && \
       cp docker/server/libs/conductor-server.jar server/build/libs/conductor-server-boot.jar && \
